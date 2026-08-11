@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>英検5級 全単語マスター</title>
+  <title>英検5級 全700単語マスター</title>
   <style>
     * { box-sizing: border-box; font-family: sans-serif; }
     body {
@@ -31,28 +31,35 @@
     .word { font-size: 32px; font-weight: bold; color: #1e293b; margin-bottom: 12px; }
     .meaning { font-size: 22px; color: #2563eb; font-weight: bold; min-height: 32px; }
     .btn {
-      width: 100%; padding: 14px; border: none; border-radius: 8px;
-      font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s;
+      width: 100%; padding: 12px; border: none; border-radius: 8px;
+      font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s;
     }
-    .btn-part { background-color: #3b82f6; color: white; margin-bottom: 12px; }
+    .btn-part-wrapper {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;
+    }
+    .btn-part { background-color: #3b82f6; color: white; text-align: left; padding: 12px 16px; }
+    .badge-done {
+      background-color: #10b981; color: white; font-size: 12px; padding: 4px 8px;
+      border-radius: 12px; margin-left: 8px; font-weight: bold; whitespace: nowrap;
+    }
     .btn-flip { background-color: #e2e8f0; color: #334155; }
     
     .btn-group { display: flex; gap: 8px; width: 100%; }
     .btn-forget { background-color: #fee2e2; color: #dc2626; flex: 1; }
     .btn-remember { background-color: #dcfce7; color: #16a34a; flex: 1; }
     
-    /* 完了画面用ボタン */
     .btn-keep { background-color: #059669; color: white; margin-top: 12px; }
     .btn-reset { background-color: #94a3b8; color: white; margin-top: 8px; font-size: 14px; padding: 10px; }
     
     .complete-msg { font-size: 20px; font-weight: bold; color: #1e293b; margin-bottom: 16px; }
     .hidden { display: none !important; }
-    .title { font-size: 22px; font-weight: bold; margin-bottom: 20px; color: #1e293b; }
+    .title { font-size: 22px; font-weight: bold; margin-bottom: 16px; color: #1e293b; }
     .toast {
       position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
       background: rgba(15, 23, 42, 0.85); color: white; padding: 8px 16px;
       border-radius: 20px; font-size: 14px; font-weight: bold; transition: opacity 0.3s;
     }
+    .part-list { max-height: 400px; overflow-y: auto; padding-right: 4px; }
   </style>
 </head>
 <body>
@@ -61,10 +68,12 @@
   <!-- 範囲選択画面 -->
   <div id="select-screen">
     <div class="title">学習範囲を選択</div>
-    <button class="btn btn-part" onclick="selectRange('part1')">Part 1 (名詞・学校 200語)</button>
-    <button class="btn btn-part" onclick="selectRange('part2')">Part 2 (動詞・形容詞 200語)</button>
-    <button class="btn btn-part" onclick="selectRange('part3')">Part 3 (熟語・疑問詞 200語)</button>
-    <button class="btn btn-part" style="background-color: #4b5563;" onclick="selectRange('all')">全範囲 (600語)</button>
+    <div class="part-list" id="part-list">
+      <!-- JavaScriptでボタンと完了バッジを自動生成 -->
+    </div>
+    <button class="btn btn-part" style="background-color: #4b5563; margin-top: 8px; text-align: center;" onclick="selectRange('all')">
+      全範囲 (700語)
+    </button>
   </div>
 
   <!-- 学習画面 -->
@@ -96,10 +105,7 @@
     <div style="font-size: 48px; margin-bottom: 12px;">🎉</div>
     <div class="complete-msg">全部覚えたのでよくできました</div>
     
-    <!-- 記念に残して戻るボタン -->
     <button class="btn btn-keep" id="keep-btn">記録を残して範囲選択へ</button>
-    
-    <!-- リセットボタン（サブ扱いにして誤操作防止） -->
     <button class="btn btn-reset" id="reset-btn">この範囲を初期化して解き直す</button>
   </div>
 </div>
