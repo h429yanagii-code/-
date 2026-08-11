@@ -37,12 +37,14 @@
     .btn-part { background-color: #3b82f6; color: white; margin-bottom: 12px; }
     .btn-flip { background-color: #e2e8f0; color: #334155; }
     
-    /* 「裏返す」の幅に半分ずつ収まる2分割グループ */
     .btn-group { display: flex; gap: 8px; width: 100%; }
     .btn-forget { background-color: #fee2e2; color: #dc2626; flex: 1; }
     .btn-remember { background-color: #dcfce7; color: #16a34a; flex: 1; }
     
-    .btn-reset { background-color: #2563eb; color: white; margin-top: 16px; }
+    /* 完了画面用ボタン */
+    .btn-keep { background-color: #059669; color: white; margin-top: 12px; }
+    .btn-reset { background-color: #94a3b8; color: white; margin-top: 8px; font-size: 14px; padding: 10px; }
+    
     .complete-msg { font-size: 20px; font-weight: bold; color: #1e293b; margin-bottom: 16px; }
     .hidden { display: none !important; }
     .title { font-size: 22px; font-weight: bold; margin-bottom: 20px; color: #1e293b; }
@@ -80,10 +82,8 @@
 
     <!-- ボタン表示切替エリア -->
     <div id="action-area">
-      <!-- 1. 裏返すボタン -->
       <button class="btn btn-flip" id="flip-btn">裏返す</button>
       
-      <!-- 2. 裏返し後に同じ位置に表示される半分のボタン（覚えた・忘れた） -->
       <div class="btn-group hidden" id="judge-btn-group">
         <button class="btn btn-remember" id="remember-btn">覚えた</button>
         <button class="btn btn-forget" id="forget-btn">忘れた</button>
@@ -95,7 +95,12 @@
   <div id="complete-screen" class="hidden">
     <div style="font-size: 48px; margin-bottom: 12px;">🎉</div>
     <div class="complete-msg">全部覚えたのでよくできました</div>
-    <button class="btn btn-reset" id="reset-btn">もう一度学ぶ（リセット）</button>
+    
+    <!-- 記念に残して戻るボタン -->
+    <button class="btn btn-keep" id="keep-btn">記録を残して範囲選択へ</button>
+    
+    <!-- リセットボタン（サブ扱いにして誤操作防止） -->
+    <button class="btn btn-reset" id="reset-btn">この範囲を初期化して解き直す</button>
   </div>
 </div>
 
