@@ -1,11 +1,14 @@
+let currentGrade = '5'; // '5' または '4'
 let wordList = [];
 let currentWord = null;
 let currentRange = '';
 
 // UI要素
+const gradeScreen = document.getElementById('grade-screen');
 const selectScreen = document.getElementById('select-screen');
 const studyScreen = document.getElementById('study-screen');
 const completeScreen = document.getElementById('complete-screen');
+const selectTitle = document.getElementById('select-title');
 const progressText = document.getElementById('progress-text');
 const wordText = document.getElementById('word-text');
 const meaningText = document.getElementById('meaning-text');
@@ -15,6 +18,7 @@ const judgeBtnGroup = document.getElementById('judge-btn-group');
 const forgetBtn = document.getElementById('forget-btn');
 const rememberBtn = document.getElementById('remember-btn');
 
+const backToGradeBtn = document.getElementById('back-to-grade-btn');
 const changePartBtn = document.getElementById('change-part-btn');
 const saveBtn = document.getElementById('save-btn');
 const keepBtn = document.getElementById('keep-btn');
@@ -25,24 +29,27 @@ const partListContainer = document.getElementById('part-list');
 // 音声再生関数
 function speakWord(text) {
   if ('speechSynthesis' in window) {
-    // 既に読み上げ中の音声があれば停止
     window.speechSynthesis.cancel();
-
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US'; // 英語（米国）の音声に設定
-    utterance.rate = 0.9;     // 読み上げ速度（少しゆっくりめ）
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9;
     window.speechSynthesis.speak(utterance);
   }
 }
 
+// 級に応じたLocalStorageキー
+function getStorageKey() {
+  return `eiken${currentGrade}_mastered_ids`;
+}
+
 // LocalStorage 取得・保存
 function getMasteredIds() {
-  const saved = localStorage.getItem('eiken5_mastered_ids');
+  const saved = localStorage.getItem(getStorageKey());
   return saved ? JSON.parse(saved) : [];
 }
 
 function saveMasteredIds(ids) {
-  localStorage.setItem('eiken5_mastered_ids', JSON.stringify(ids));
+  localStorage.setItem(getStorageKey(), JSON.stringify(ids));
 }
 
 function showToast(message) {
@@ -53,14 +60,26 @@ function showToast(message) {
   }, 1500);
 }
 
+// 級の選択処理
+function selectGrade(grade) {
+  currentGrade = grade;
+  selectTitle.textContent = `英検${currentGrade}級単語帳`;
+  
+  gradeScreen.classList.add('hidden');
+  selectScreen.classList.remove('hidden');
+  
+  renderPartButtons();
+}
+
 // 範囲選択画面のボタン描画（完了チェック）
 function renderPartButtons() {
   partListContainer.innerHTML = '';
   const masteredIds = getMasteredIds();
+  const allGradeWords = wordsData[currentGrade] || [];
 
   for (let i = 1; i <= 10; i++) {
     const partKey = `part${i}`;
-    const partWords = initialWords.filter(w => w.part === partKey);
+    const partWords = allGradeWords.filter(w => w.part === partKey);
     
     // パート内の全単語がマスター済みかチェック
     const isCompleted = partWords.length > 0 && partWords.every(w => masteredIds.includes(w.id));
@@ -89,12 +108,13 @@ function renderPartButtons() {
 // 範囲選択
 function selectRange(range) {
   currentRange = range;
+  const allGradeWords = wordsData[currentGrade] || [];
   
   let filtered = [];
   if (range === 'all') {
-    filtered = initialWords;
+    filtered = allGradeWords;
   } else {
-    filtered = initialWords.filter(w => w.part === range);
+    filtered = allGradeWords.filter(w => w.part === range);
   }
 
   const masteredIds = getMasteredIds();
@@ -166,8 +186,12 @@ rememberBtn.addEventListener('click', () => {
   pickNextWord();
 });
 
+backToGradeBtn.addEventListener('click', () => {
+  selectScreen.classList.add('hidden');
+  gradeScreen.classList.remove('hidden');
+});
+
 changePartBtn.addEventListener('click', () => {
-  // 画面移動時に音声が残っていれば停止
   if ('speechSynthesis' in window) window.speechSynthesis.cancel();
 
   studyScreen.classList.add('hidden');
@@ -204,6 +228,3 @@ resetBtn.addEventListener('click', () => {
     selectScreen.classList.remove('hidden');
   }
 });
-
-// 初期起動処理
-renderPartButtons();
