@@ -22,6 +22,19 @@ const resetBtn = document.getElementById('reset-btn');
 const toast = document.getElementById('toast');
 const partListContainer = document.getElementById('part-list');
 
+// 音声再生関数
+function speakWord(text) {
+  if ('speechSynthesis' in window) {
+    // 既に読み上げ中の音声があれば停止
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US'; // 英語（米国）の音声に設定
+    utterance.rate = 0.9;     // 読み上げ速度（少しゆっくりめ）
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
 // LocalStorage 取得・保存
 function getMasteredIds() {
   const saved = localStorage.getItem('eiken5_mastered_ids');
@@ -124,6 +137,9 @@ function pickNextWord() {
 
   flipBtn.classList.remove('hidden');
   judgeBtnGroup.classList.add('hidden');
+
+  // 単語が表示されたタイミングで音声を再生
+  speakWord(currentWord.word);
 }
 
 // --- イベント登録 ---
@@ -151,6 +167,9 @@ rememberBtn.addEventListener('click', () => {
 });
 
 changePartBtn.addEventListener('click', () => {
+  // 画面移動時に音声が残っていれば停止
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
   studyScreen.classList.add('hidden');
   renderPartButtons();
   selectScreen.classList.remove('hidden');
