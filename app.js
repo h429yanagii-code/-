@@ -17,6 +17,7 @@ const rememberBtn = document.getElementById('remember-btn');
 
 const changePartBtn = document.getElementById('change-part-btn');
 const saveBtn = document.getElementById('save-btn');
+const keepBtn = document.getElementById('keep-btn');
 const resetBtn = document.getElementById('reset-btn');
 const toast = document.getElementById('toast');
 
@@ -83,31 +84,26 @@ function pickNextWord() {
   const randomIndex = Math.floor(Math.random() * available.length);
   currentWord = available[randomIndex];
 
-  // カード表示の初期化
   wordText.textContent = currentWord.word;
   meaningText.textContent = currentWord.meaning;
   meaningText.classList.add('hidden');
 
-  // ボタン切り替え: 「裏返す」を表示し、「覚えた/忘れた」グループを隠す
   flipBtn.classList.remove('hidden');
   judgeBtnGroup.classList.add('hidden');
 }
 
 // --- イベント登録 ---
 
-// 「裏返す」ボタンを押したとき
 flipBtn.addEventListener('click', () => {
-  meaningText.classList.remove('hidden');   // 日本語訳を表示
-  flipBtn.classList.add('hidden');          // 「裏返す」を消す
-  judgeBtnGroup.classList.remove('hidden'); // 半分サイズの「覚えた」「忘れた」ボタンを表示
+  meaningText.classList.remove('hidden');
+  flipBtn.classList.add('hidden');
+  judgeBtnGroup.classList.remove('hidden');
 });
 
-// 「忘れた」ボタンを押したとき（旧「覚えられない」）
 forgetBtn.addEventListener('click', () => {
   pickNextWord();
 });
 
-// 「覚えた」ボタンを押したとき
 rememberBtn.addEventListener('click', () => {
   currentWord.isMastered = true;
 
@@ -120,13 +116,11 @@ rememberBtn.addEventListener('click', () => {
   pickNextWord();
 });
 
-// 範囲変更ボタン
 changePartBtn.addEventListener('click', () => {
   studyScreen.classList.add('hidden');
   selectScreen.classList.remove('hidden');
 });
 
-// 手動セーブボタン
 saveBtn.addEventListener('click', () => {
   const masteredIds = getMasteredIds();
   wordList.forEach(w => {
@@ -138,7 +132,13 @@ saveBtn.addEventListener('click', () => {
   showToast("進捗を保存しました！");
 });
 
-// リセットボタン
+// 記録を残して範囲選択へ戻るボタン
+keepBtn.addEventListener('click', () => {
+  completeScreen.classList.add('hidden');
+  selectScreen.classList.remove('hidden');
+});
+
+// 進捗を初期化して最初からやり直すボタン
 resetBtn.addEventListener('click', () => {
   if (confirm("現在の範囲の進捗をリセットして最初からやり直しますか？")) {
     const masteredIds = getMasteredIds();
