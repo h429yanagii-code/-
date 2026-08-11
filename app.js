@@ -20,7 +20,7 @@ const saveBtn = document.getElementById('save-btn');
 const resetBtn = document.getElementById('reset-btn');
 const toast = document.getElementById('toast');
 
-// --- LocalStorage 関連処理 ---
+// LocalStorage 取得・保存
 function getMasteredIds() {
   const saved = localStorage.getItem('eiken5_mastered_ids');
   return saved ? JSON.parse(saved) : [];
@@ -30,7 +30,6 @@ function saveMasteredIds(ids) {
   localStorage.setItem('eiken5_mastered_ids', JSON.stringify(ids));
 }
 
-// 保存通知メッセージ（トースト）を表示
 function showToast(message) {
   toast.textContent = message;
   toast.classList.remove('hidden');
@@ -64,7 +63,7 @@ function selectRange(range) {
   pickNextWord();
 }
 
-// 次の単語をセット
+// 次の単語を出題
 function pickNextWord() {
   const unmastered = wordList.filter(w => !w.isMastered);
 
@@ -84,31 +83,31 @@ function pickNextWord() {
   const randomIndex = Math.floor(Math.random() * available.length);
   currentWord = available[randomIndex];
 
-  // カード領域の表示初期化
+  // カード表示の初期化
   wordText.textContent = currentWord.word;
   meaningText.textContent = currentWord.meaning;
   meaningText.classList.add('hidden');
 
-  // ボタン表示初期化: 「裏返す」を表示し、「2つの判定ボタン」を隠す
+  // ボタン切り替え: 「裏返す」を表示し、「覚えた/忘れた」グループを隠す
   flipBtn.classList.remove('hidden');
   judgeBtnGroup.classList.add('hidden');
 }
 
-// --- イベント処理 ---
+// --- イベント登録 ---
 
-// 裏返すボタンを押したとき
+// 「裏返す」ボタンを押したとき
 flipBtn.addEventListener('click', () => {
-  meaningText.classList.remove('hidden'); // 日本語訳を表示
-  flipBtn.classList.add('hidden');        // 「裏返す」ボタンを非表示
-  judgeBtnGroup.classList.remove('hidden'); // 「覚えられない」「覚えた」ボタンを表示
+  meaningText.classList.remove('hidden');   // 日本語訳を表示
+  flipBtn.classList.add('hidden');          // 「裏返す」を消す
+  judgeBtnGroup.classList.remove('hidden'); // 半分サイズの「覚えた」「忘れた」ボタンを表示
 });
 
-// 覚えられないボタンを押したとき
+// 「忘れた」ボタンを押したとき（旧「覚えられない」）
 forgetBtn.addEventListener('click', () => {
   pickNextWord();
 });
 
-// 覚えたボタンを押したとき
+// 「覚えた」ボタンを押したとき
 rememberBtn.addEventListener('click', () => {
   currentWord.isMastered = true;
 
@@ -121,7 +120,7 @@ rememberBtn.addEventListener('click', () => {
   pickNextWord();
 });
 
-// 途中でPARTを変更するボタン
+// 範囲変更ボタン
 changePartBtn.addEventListener('click', () => {
   studyScreen.classList.add('hidden');
   selectScreen.classList.remove('hidden');
@@ -139,7 +138,7 @@ saveBtn.addEventListener('click', () => {
   showToast("進捗を保存しました！");
 });
 
-// 完了画面からのリセットボタン
+// リセットボタン
 resetBtn.addEventListener('click', () => {
   if (confirm("現在の範囲の進捗をリセットして最初からやり直しますか？")) {
     const masteredIds = getMasteredIds();
