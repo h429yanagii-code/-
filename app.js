@@ -120,7 +120,7 @@ function pickNextWord() {
 
   wordText.textContent = currentWord.word;
   meaningText.textContent = currentWord.meaning;
-  meaningText.classList.add('hidden');
+  meaningText.classList.add('invisible');
 
   flipBtn.classList.remove('hidden');
   judgeBtnGroup.classList.add('hidden');
@@ -129,7 +129,7 @@ function pickNextWord() {
 // --- イベント登録 ---
 
 flipBtn.addEventListener('click', () => {
-  meaningText.classList.remove('hidden');
+  meaningText.classList.remove('invisible');
   flipBtn.classList.add('hidden');
   judgeBtnGroup.classList.remove('hidden');
 });
