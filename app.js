@@ -20,6 +20,7 @@ const saveBtn = document.getElementById('save-btn');
 const keepBtn = document.getElementById('keep-btn');
 const resetBtn = document.getElementById('reset-btn');
 const toast = document.getElementById('toast');
+const partListContainer = document.getElementById('part-list');
 
 // LocalStorage 取得・保存
 function getMasteredIds() {
@@ -37,6 +38,39 @@ function showToast(message) {
   setTimeout(() => {
     toast.classList.add('hidden');
   }, 1500);
+}
+
+// 範囲選択画面のボタン描画（完了チェック）
+function renderPartButtons() {
+  partListContainer.innerHTML = '';
+  const masteredIds = getMasteredIds();
+
+  for (let i = 1; i <= 10; i++) {
+    const partKey = `part${i}`;
+    const partWords = initialWords.filter(w => w.part === partKey);
+    
+    // パート内の全単語がマスター済みかチェック
+    const isCompleted = partWords.length > 0 && partWords.every(w => masteredIds.includes(w.id));
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'btn-part-wrapper';
+
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-part';
+    btn.textContent = `Part ${i} (${(i-1)*70 + 1}〜${i*70}語)`;
+    btn.onclick = () => selectRange(partKey);
+
+    wrapper.appendChild(btn);
+
+    if (isCompleted) {
+      const badge = document.createElement('span');
+      badge.className = 'badge-done';
+      badge.textContent = '完了';
+      wrapper.appendChild(badge);
+    }
+
+    partListContainer.appendChild(wrapper);
+  }
 }
 
 // 範囲選択
@@ -118,6 +152,7 @@ rememberBtn.addEventListener('click', () => {
 
 changePartBtn.addEventListener('click', () => {
   studyScreen.classList.add('hidden');
+  renderPartButtons();
   selectScreen.classList.remove('hidden');
 });
 
@@ -132,13 +167,12 @@ saveBtn.addEventListener('click', () => {
   showToast("進捗を保存しました！");
 });
 
-// 記録を残して範囲選択へ戻るボタン
 keepBtn.addEventListener('click', () => {
   completeScreen.classList.add('hidden');
+  renderPartButtons();
   selectScreen.classList.remove('hidden');
 });
 
-// 進捗を初期化して最初からやり直すボタン
 resetBtn.addEventListener('click', () => {
   if (confirm("現在の範囲の進捗をリセットして最初からやり直しますか？")) {
     const masteredIds = getMasteredIds();
@@ -147,6 +181,10 @@ resetBtn.addEventListener('click', () => {
     saveMasteredIds(updatedIds);
 
     completeScreen.classList.add('hidden');
+    renderPartButtons();
     selectScreen.classList.remove('hidden');
   }
 });
+
+// 初期起動処理
+renderPartButtons();
