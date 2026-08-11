@@ -40,7 +40,7 @@
     .btn-part { background-color: #3b82f6; color: white; text-align: left; padding: 12px 16px; }
     .badge-done {
       background-color: #10b981; color: white; font-size: 12px; padding: 4px 8px;
-      border-radius: 12px; margin-left: 8px; font-weight: bold; whitespace: nowrap;
+      border-radius: 12px; margin-left: 8px; font-weight: bold; white-space: nowrap;
     }
     .btn-flip { background-color: #e2e8f0; color: #334155; }
     
@@ -53,6 +53,7 @@
     
     .complete-msg { font-size: 20px; font-weight: bold; color: #1e293b; margin-bottom: 16px; }
     .hidden { display: none !important; }
+    .invisible { visibility: hidden; }
     .title { font-size: 24px; font-weight: bold; margin-bottom: 16px; color: #1e293b; }
     .toast {
       position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
@@ -87,7 +88,7 @@
     
     <div class="card">
       <div class="word" id="word-text">---</div>
-      <div class="meaning hidden" id="meaning-text">---</div>
+      <div class="meaning invisible" id="meaning-text">---</div>
     </div>
 
     <!-- ボタン表示切替エリア -->
