@@ -36,9 +36,12 @@
     }
     .btn-part { background-color: #3b82f6; color: white; margin-bottom: 12px; }
     .btn-flip { background-color: #e2e8f0; color: #334155; }
-    .btn-group { display: flex; gap: 8px; }
+    
+    /* 「裏返す」の幅に半分ずつ収まる2分割グループ */
+    .btn-group { display: flex; gap: 8px; width: 100%; }
     .btn-forget { background-color: #fee2e2; color: #dc2626; flex: 1; }
     .btn-remember { background-color: #dcfce7; color: #16a34a; flex: 1; }
+    
     .btn-reset { background-color: #2563eb; color: white; margin-top: 16px; }
     .complete-msg { font-size: 20px; font-weight: bold; color: #1e293b; margin-bottom: 16px; }
     .hidden { display: none !important; }
@@ -75,15 +78,15 @@
       <div class="meaning hidden" id="meaning-text">---</div>
     </div>
 
-    <!-- アクション領域（表示切替） -->
+    <!-- ボタン表示切替エリア -->
     <div id="action-area">
-      <!-- 初期表示: 裏返すボタン -->
+      <!-- 1. 裏返すボタン -->
       <button class="btn btn-flip" id="flip-btn">裏返す</button>
       
-      <!-- 裏返し後表示: 2つの判定ボタン（初期状態はhidden） -->
+      <!-- 2. 裏返し後に同じ位置に表示される半分のボタン（覚えた・忘れた） -->
       <div class="btn-group hidden" id="judge-btn-group">
-        <button class="btn btn-forget" id="forget-btn">覚えられない</button>
         <button class="btn btn-remember" id="remember-btn">覚えた</button>
+        <button class="btn btn-forget" id="forget-btn">忘れた</button>
       </div>
     </div>
   </div>
@@ -96,7 +99,6 @@
   </div>
 </div>
 
-<!-- 保存完了のトースト表示 -->
 <div id="toast" class="toast hidden">保存しました</div>
 
 <script src="words.js"></script>
