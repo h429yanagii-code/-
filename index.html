@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>英検5級 全700単語マスター</title>
+  <title>英検単語マスター</title>
   <style>
     * { box-sizing: border-box; font-family: sans-serif; }
     body {
@@ -34,6 +34,9 @@
       width: 100%; padding: 12px; border: none; border-radius: 8px;
       font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s;
     }
+    .btn-grade {
+      background-color: #2563eb; color: white; margin-bottom: 12px; font-size: 18px; padding: 16px;
+    }
     .btn-part-wrapper {
       display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;
     }
@@ -54,22 +57,31 @@
     .complete-msg { font-size: 20px; font-weight: bold; color: #1e293b; margin-bottom: 16px; }
     .hidden { display: none !important; }
     .invisible { visibility: hidden; }
-    .title { font-size: 24px; font-weight: bold; margin-bottom: 16px; color: #1e293b; }
+    .title { font-size: 24px; font-weight: bold; margin-bottom: 20px; color: #1e293b; }
     .toast {
       position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
       background: rgba(15, 23, 42, 0.85); color: white; padding: 8px 16px;
       border-radius: 20px; font-size: 14px; font-weight: bold; transition: opacity 0.3s;
     }
-    .part-list { max-height: 400px; overflow-y: auto; padding-right: 4px; }
+    .part-list { max-height: 380px; overflow-y: auto; padding-right: 4px; }
   </style>
 </head>
 <body>
 
 <div class="container">
+  <!-- 級選択画面（最初の画面） -->
+  <div id="grade-screen">
+    <div class="title">英検単語マスター</div>
+    <button class="btn btn-grade" onclick="selectGrade('5')">英検 5級</button>
+    <button class="btn btn-grade" style="background-color: #0d9488;" onclick="selectGrade('4')">英検 4級</button>
+  </div>
+
   <!-- 範囲選択画面 -->
-  <div id="select-screen">
-    <!-- タイトル部分を修正 -->
-    <div class="title">英検5級単語帳</div>
+  <div id="select-screen" class="hidden">
+    <div class="header-nav">
+      <button class="btn-sub" id="back-to-grade-btn">← 級選択</button>
+    </div>
+    <div class="title" id="select-title">英検5級単語帳</div>
     <div class="part-list" id="part-list">
       <!-- JavaScriptでボタンと完了バッジを自動生成 -->
     </div>
