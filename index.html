@@ -15,7 +15,14 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 380px;
       text-align: center; margin: 16px;
     }
-    .progress { color: #666; font-size: 14px; margin-bottom: 16px; }
+    .header-nav {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+    }
+    .progress { color: #666; font-size: 14px; }
+    .btn-sub {
+      background-color: #64748b; color: white; border: none; padding: 6px 12px;
+      border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;
+    }
     .card {
       background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px;
       height: 180px; display: flex; flex-direction: column;
@@ -28,16 +35,19 @@
       font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s;
     }
     .btn-part { background-color: #3b82f6; color: white; margin-bottom: 12px; }
-    .btn-part:hover { background-color: #2563eb; }
-    .btn-flip { background-color: #e2e8f0; color: #334155; margin-bottom: 12px; }
+    .btn-flip { background-color: #e2e8f0; color: #334155; }
     .btn-group { display: flex; gap: 8px; }
     .btn-forget { background-color: #fee2e2; color: #dc2626; flex: 1; }
     .btn-remember { background-color: #dcfce7; color: #16a34a; flex: 1; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-reset { background-color: #2563eb; color: white; margin-top: 16px; }
     .complete-msg { font-size: 20px; font-weight: bold; color: #1e293b; margin-bottom: 16px; }
-    .hidden { display: none; }
+    .hidden { display: none !important; }
     .title { font-size: 22px; font-weight: bold; margin-bottom: 20px; color: #1e293b; }
+    .toast {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.85); color: white; padding: 8px 16px;
+      border-radius: 20px; font-size: 14px; font-weight: bold; transition: opacity 0.3s;
+    }
   </style>
 </head>
 <body>
@@ -46,23 +56,35 @@
   <!-- 範囲選択画面 -->
   <div id="select-screen">
     <div class="title">学習範囲を選択</div>
-    <button class="btn btn-part" onclick="selectRange('part1')">Part 1 (名詞・学校・身の回り 200語)</button>
-    <button class="btn btn-part" onclick="selectRange('part2')">Part 2 (動詞・形容詞・人 200語)</button>
-    <button class="btn btn-part" onclick="selectRange('part3')">Part 3 (熟語・時間・疑問詞等 200語)</button>
+    <button class="btn btn-part" onclick="selectRange('part1')">Part 1 (名詞・学校 200語)</button>
+    <button class="btn btn-part" onclick="selectRange('part2')">Part 2 (動詞・形容詞 200語)</button>
+    <button class="btn btn-part" onclick="selectRange('part3')">Part 3 (熟語・疑問詞 200語)</button>
     <button class="btn btn-part" style="background-color: #4b5563;" onclick="selectRange('all')">全範囲 (600語)</button>
   </div>
 
   <!-- 学習画面 -->
   <div id="study-screen" class="hidden">
-    <div class="progress" id="progress-text">残り: 0 単語</div>
+    <div class="header-nav">
+      <button class="btn-sub" id="change-part-btn">← 範囲変更</button>
+      <div class="progress" id="progress-text">残り: 0 単語</div>
+      <button class="btn-sub" id="save-btn" style="background-color: #059669;">💾 セーブ</button>
+    </div>
+    
     <div class="card">
       <div class="word" id="word-text">---</div>
       <div class="meaning hidden" id="meaning-text">---</div>
     </div>
-    <button class="btn btn-flip" id="flip-btn">裏返す</button>
-    <div class="btn-group">
-      <button class="btn btn-forget" id="forget-btn" disabled>覚えられない</button>
-      <button class="btn btn-remember" id="remember-btn" disabled>覚えた</button>
+
+    <!-- アクション領域（表示切替） -->
+    <div id="action-area">
+      <!-- 初期表示: 裏返すボタン -->
+      <button class="btn btn-flip" id="flip-btn">裏返す</button>
+      
+      <!-- 裏返し後表示: 2つの判定ボタン（初期状態はhidden） -->
+      <div class="btn-group hidden" id="judge-btn-group">
+        <button class="btn btn-forget" id="forget-btn">覚えられない</button>
+        <button class="btn btn-remember" id="remember-btn">覚えた</button>
+      </div>
     </div>
   </div>
 
@@ -73,6 +95,9 @@
     <button class="btn btn-reset" id="reset-btn">もう一度学ぶ（リセット）</button>
   </div>
 </div>
+
+<!-- 保存完了のトースト表示 -->
+<div id="toast" class="toast hidden">保存しました</div>
 
 <script src="words.js"></script>
 <script src="app.js"></script>
