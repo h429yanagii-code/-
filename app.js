@@ -29,6 +29,13 @@ const partListContainer = document.getElementById('part-list');
 const speakerBtn = document.getElementById('speaker-btn');
 const weakModeBtn = document.getElementById('weak-mode-btn');
 
+// モーダル用要素
+const weakListBtn = document.getElementById('weak-list-btn');
+const modalOverlay = document.getElementById('modal-overlay');
+const closeModalBtn = document.getElementById('close-modal-btn');
+const weakTableBody = document.getElementById('weak-table-body');
+const modalTitle = document.getElementById('modal-title');
+
 // カテゴリーの表示名定義
 const categoryNames = {
   "5": [
@@ -154,13 +161,15 @@ function renderPartButtons() {
   const allGradeWords = wordsData[currentGrade] || [];
   const categories = categoryNames[currentGrade] || [];
 
-  // 苦手単語集中暗記ボタンの状態更新
+  // 苦手単語ボタン・リストボタンの状態更新
   const currentWeakWords = allGradeWords.filter(w => weakIds.includes(w.id));
   weakModeBtn.textContent = `🔥 苦手単語集中暗記 (${currentWeakWords.length}語)`;
   if (currentWeakWords.length === 0) {
     weakModeBtn.disabled = true;
+    weakListBtn.disabled = true;
   } else {
     weakModeBtn.disabled = false;
+    weakListBtn.disabled = false;
   }
 
   // カテゴリーボタン作成
@@ -246,7 +255,58 @@ function pickNextWord() {
   judgeBtnGroup.classList.add('hidden');
 }
 
+// --- 苦手単語リスト（モーダル）描画 ---
+function openWeakListModal() {
+  const weakIds = getWeakIds();
+  const allGradeWords = wordsData[currentGrade] || [];
+  const currentWeakWords = allGradeWords.filter(w => weakIds.includes(w.id));
+
+  modalTitle.textContent = `英検${currentGrade}級 苦手単語 (${currentWeakWords.length}語)`;
+  weakTableBody.innerHTML = '';
+
+  currentWeakWords.forEach(item => {
+    const tr = document.createElement('tr');
+
+    const tdWord = document.createElement('td');
+    tdWord.style.fontWeight = 'bold';
+    tdWord.textContent = item.word;
+
+    const tdMeaning = document.createElement('td');
+    tdMeaning.textContent = item.meaning;
+
+    const tdAudio = document.createElement('td');
+    tdAudio.style.textAlign = 'center';
+    const audioBtn = document.createElement('button');
+    audioBtn.className = 'audio-btn';
+    audioBtn.textContent = '🔊';
+    audioBtn.onclick = () => playAudio(item.word);
+    tdAudio.appendChild(audioBtn);
+
+    tr.appendChild(tdWord);
+    tr.appendChild(tdMeaning);
+    tr.appendChild(tdAudio);
+
+    weakTableBody.appendChild(tr);
+  });
+
+  modalOverlay.classList.remove('hidden');
+}
+
 // --- イベント登録 ---
+
+weakListBtn.addEventListener('click', () => {
+  openWeakListModal();
+});
+
+closeModalBtn.addEventListener('click', () => {
+  modalOverlay.classList.add('hidden');
+});
+
+modalOverlay.addEventListener('click', (e) => {
+  if (e.target === modalOverlay) {
+    modalOverlay.classList.add('hidden');
+  }
+});
 
 if (speakerBtn) {
   speakerBtn.addEventListener('click', () => {
@@ -270,7 +330,6 @@ flipBtn.addEventListener('click', () => {
 });
 
 forgetBtn.addEventListener('click', () => {
-  // 「忘れた」を押したら苦手リストに追加
   if (currentWord) {
     addWeakId(currentWord.id);
   }
@@ -280,7 +339,6 @@ forgetBtn.addEventListener('click', () => {
 rememberBtn.addEventListener('click', () => {
   currentWord.isMastered = true;
 
-  // 通常モード時のみ、習得リストに追加（苦手リストからは自動削除しない）
   if (currentRange !== 'weak') {
     const masteredIds = getMasteredIds();
     if (!masteredIds.includes(currentWord.id)) {
@@ -327,7 +385,6 @@ keepBtn.addEventListener('click', () => {
 resetBtn.addEventListener('click', () => {
   if (confirm("現在の範囲の進捗をリセットして最初からやり直しますか？")) {
     if (currentRange === 'weak') {
-      // 苦手モードでリセットボタンが押された場合のみ、苦手リストをクリア
       saveWeakIds([]);
     } else {
       const masteredIds = getMasteredIds();
