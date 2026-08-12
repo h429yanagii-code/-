@@ -154,12 +154,12 @@ function selectGrade(grade) {
   renderPartButtons();
 }
 
-// 範囲選択画面のボタン描画（全範囲ボタンもスクロール内に含める処理）
+// 範囲選択画面のボタン描画（①〜⑩のあとに「全範囲」ボタンを確実に配置）
 function renderPartButtons() {
   partListContainer.innerHTML = '';
   const masteredIds = getMasteredIds();
   const weakIds = getWeakIds();
-  const allGradeWords = wordsData[currentGrade] || [];
+  const allGradeWords = (typeof wordsData !== 'undefined' && wordsData[currentGrade]) ? wordsData[currentGrade] : [];
   const categories = categoryNames[currentGrade] || [];
 
   // 苦手単語ボタン・リストボタンの状態更新
@@ -173,7 +173,7 @@ function renderPartButtons() {
     weakListBtn.disabled = false;
   }
 
-  // カテゴリー①〜⑩のボタン作成
+  // 1. カテゴリー①〜⑩のボタン作成
   categories.forEach(cat => {
     const partWords = allGradeWords.filter(w => w.part === cat.key);
     const isCompleted = partWords.length > 0 && partWords.every(w => masteredIds.includes(w.id));
@@ -194,7 +194,7 @@ function renderPartButtons() {
     partListContainer.appendChild(wrapper);
   });
 
-  // スクロール内に「全範囲」ボタンを追加（同じ青色の背景）
+  // 2. ⑩の後ろに「全範囲」ボタンを追加
   const allWrapper = document.createElement('div');
   allWrapper.className = 'btn-part-wrapper';
 
@@ -215,7 +215,7 @@ function renderPartButtons() {
 // 範囲選択
 function selectRange(range) {
   currentRange = range;
-  const allGradeWords = wordsData[currentGrade] || [];
+  const allGradeWords = (typeof wordsData !== 'undefined' && wordsData[currentGrade]) ? wordsData[currentGrade] : [];
   
   let filtered = [];
   if (range === 'all') {
@@ -272,7 +272,7 @@ function pickNextWord() {
 // --- 苦手単語リスト（モーダル）描画 ---
 function openWeakListModal() {
   const weakIds = getWeakIds();
-  const allGradeWords = wordsData[currentGrade] || [];
+  const allGradeWords = (typeof wordsData !== 'undefined' && wordsData[currentGrade]) ? wordsData[currentGrade] : [];
   const currentWeakWords = allGradeWords.filter(w => weakIds.includes(w.id));
 
   modalTitle.textContent = `英検${currentGrade}級 苦手単語 (${currentWeakWords.length}語)`;
@@ -413,7 +413,7 @@ resetBtn.addEventListener('click', () => {
   }
 });
 
-// 「学習クリア」ボタン処理（ダイアログ確認後に選択中の級の記録を消去）
+// 「学習クリア」ボタン処理
 clearRecordBtn.addEventListener('click', () => {
   if (confirm(`今までの学習記録（英検${currentGrade}級）をクリアしますか？`)) {
     saveMasteredIds([]);
