@@ -39,7 +39,7 @@ function playLocalAudio(word) {
   currentAudio = new Audio(`audio/${fileName}.mp3`);
   
   currentAudio.play().catch(err => {
-    console.log(`音声再生をスキップ (audio/${fileName}.mp3 が存在しません)`):
+    console.log(`音声再生をスキップ (audio/${fileName}.mp3 が存在しません)`);
   });
 }
 
