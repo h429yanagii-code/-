@@ -28,7 +28,6 @@ const toast = document.getElementById('toast');
 const partListContainer = document.getElementById('part-list');
 const speakerBtn = document.getElementById('speaker-btn');
 const weakModeBtn = document.getElementById('weak-mode-btn');
-const allRangeBtn = document.getElementById('all-range-btn');
 const clearRecordBtn = document.getElementById('clear-record-btn');
 
 // モーダル用要素
@@ -155,7 +154,7 @@ function selectGrade(grade) {
   renderPartButtons();
 }
 
-// 範囲選択画面のボタン描画（完了判定でボタンの色を緑色へ変更）
+// 範囲選択画面のボタン描画（全範囲ボタンもスクロール内に含める処理）
 function renderPartButtons() {
   partListContainer.innerHTML = '';
   const masteredIds = getMasteredIds();
@@ -174,7 +173,7 @@ function renderPartButtons() {
     weakListBtn.disabled = false;
   }
 
-  // カテゴリーボタン作成
+  // カテゴリー①〜⑩のボタン作成
   categories.forEach(cat => {
     const partWords = allGradeWords.filter(w => w.part === cat.key);
     const isCompleted = partWords.length > 0 && partWords.every(w => masteredIds.includes(w.id));
@@ -186,7 +185,6 @@ function renderPartButtons() {
     btn.className = 'btn btn-part';
     btn.textContent = `${cat.name} (${partWords.length}語)`;
     
-    // 完了している場合は背景色を緑色(#10b981)に変更
     if (isCompleted) {
       btn.classList.add('btn-completed');
     }
@@ -196,13 +194,22 @@ function renderPartButtons() {
     partListContainer.appendChild(wrapper);
   });
 
-  // 全範囲ボタンの完了判定＆色変更
+  // スクロール内に「全範囲」ボタンを追加（同じ青色の背景）
+  const allWrapper = document.createElement('div');
+  allWrapper.className = 'btn-part-wrapper';
+
+  const allBtn = document.createElement('button');
+  allBtn.className = 'btn btn-part';
+  allBtn.textContent = `全範囲 (${allGradeWords.length}語)`;
+
   const isAllCompleted = allGradeWords.length > 0 && allGradeWords.every(w => masteredIds.includes(w.id));
   if (isAllCompleted) {
-    allRangeBtn.classList.add('btn-completed');
-  } else {
-    allRangeBtn.classList.remove('btn-completed');
+    allBtn.classList.add('btn-completed');
   }
+
+  allBtn.onclick = () => selectRange('all');
+  allWrapper.appendChild(allBtn);
+  partListContainer.appendChild(allWrapper);
 }
 
 // 範囲選択
@@ -406,7 +413,7 @@ resetBtn.addEventListener('click', () => {
   }
 });
 
-// 「学習クリア」ボタン処理（ダイアログ確認後に選択中の級の記録を全消去）
+// 「学習クリア」ボタン処理（ダイアログ確認後に選択中の級の記録を消去）
 clearRecordBtn.addEventListener('click', () => {
   if (confirm(`今までの学習記録（英検${currentGrade}級）をクリアしますか？`)) {
     saveMasteredIds([]);
