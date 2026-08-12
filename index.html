@@ -28,7 +28,8 @@
       height: 180px; display: flex; flex-direction: column;
       justify-content: center; align-items: center; margin-bottom: 20px; padding: 16px;
     }
-    .word { font-size: 32px; font-weight: bold; color: #1e293b; margin-bottom: 12px; }
+    .word-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .word { font-size: 32px; font-weight: bold; color: #1e293b; }
     .meaning { font-size: 22px; color: #2563eb; font-weight: bold; min-height: 32px; }
     .btn {
       width: 100%; padding: 12px; border: none; border-radius: 8px;
@@ -44,6 +45,13 @@
     .badge-done {
       background-color: #10b981; color: white; font-size: 12px; padding: 4px 8px;
       border-radius: 12px; margin-left: 8px; font-weight: bold; white-space: nowrap;
+    }
+    .btn-weak {
+      background-color: #dc2626; color: white; font-size: 16px; padding: 14px;
+      margin-bottom: 12px; border-radius: 8px; font-weight: bold; width: 100%; border: none; cursor: pointer;
+    }
+    .btn-weak:disabled {
+      background-color: #cbd5e1; color: #94a3b8; cursor: not-allowed;
     }
     .btn-flip { background-color: #e2e8f0; color: #334155; }
     
@@ -63,7 +71,7 @@
       background: rgba(15, 23, 42, 0.85); color: white; padding: 8px 16px;
       border-radius: 20px; font-size: 14px; font-weight: bold; transition: opacity 0.3s;
     }
-    .part-list { max-height: 380px; overflow-y: auto; padding-right: 4px; }
+    .part-list { max-height: 320px; overflow-y: auto; padding-right: 4px; }
   </style>
 </head>
 <body>
@@ -82,11 +90,17 @@
       <button class="btn-sub" id="back-to-grade-btn">← 級選択</button>
     </div>
     <div class="title" id="select-title">英検5級単語帳</div>
+
+    <!-- 苦手集中暗記ボタン -->
+    <button class="btn-weak" id="weak-mode-btn" onclick="selectRange('weak')">
+      🔥 苦手単語集中暗記 (0語)
+    </button>
+
     <div class="part-list" id="part-list">
       <!-- JavaScriptでボタンと完了バッジを自動生成 -->
     </div>
     <button class="btn btn-part" style="background-color: #4b5563; margin-top: 8px; text-align: center;" onclick="selectRange('all')">
-      全範囲 (700語)
+      全範囲
     </button>
   </div>
 
@@ -99,7 +113,10 @@
     </div>
     
     <div class="card">
-      <div class="word" id="word-text">---</div>
+      <div class="word-wrapper">
+        <div class="word" id="word-text">---</div>
+        <button id="speaker-btn" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 4px;">🔊</button>
+      </div>
       <div class="meaning invisible" id="meaning-text">---</div>
     </div>
 
@@ -117,7 +134,7 @@
   <!-- 完了画面 -->
   <div id="complete-screen" class="hidden">
     <div style="font-size: 48px; margin-bottom: 12px;">🎉</div>
-    <div class="complete-msg">全部覚えたのでよくできました</div>
+    <div class="complete-msg">この範囲をクリアしました！</div>
     
     <button class="btn btn-keep" id="keep-btn">記録を残して範囲選択へ</button>
     <button class="btn btn-reset" id="reset-btn">この範囲を初期化して解き直す</button>
@@ -129,7 +146,6 @@
 <script src="words.js"></script>
 <script src="app.js"></script>
 <script>
-  // PWA/オフライン用 Service Worker の登録
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js')
       .then(() => console.log('Service Worker Registered'))
