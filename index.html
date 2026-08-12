@@ -62,9 +62,10 @@
     .btn-list:disabled {
       background-color: #cbd5e1; color: #94a3b8; cursor: not-allowed;
     }
+    /* 灰色へ変更した学習クリアボタン */
     .btn-clear-record {
-      background-color: #ef4444; color: white; font-size: 14px; padding: 10px;
-      margin-top: 8px; border-radius: 8px; font-weight: bold; width: 100%; border: none; cursor: pointer;
+      background-color: #64748b; color: white; font-size: 14px; padding: 10px;
+      margin-top: 12px; border-radius: 8px; font-weight: bold; width: 100%; border: none; cursor: pointer;
     }
     .btn-flip { background-color: #e2e8f0; color: #334155; }
     
@@ -84,7 +85,8 @@
       background: rgba(15, 23, 42, 0.85); color: white; padding: 8px 16px;
       border-radius: 20px; font-size: 14px; font-weight: bold; transition: opacity 0.3s;
     }
-    .part-list { max-height: 250px; overflow-y: auto; padding-right: 4px; }
+    /* スクロールエリアの長さを1.3倍（約380px）に拡張 */
+    .part-list { max-height: 380px; overflow-y: auto; padding-right: 4px; }
 
     /* モーダル（苦手リスト画面）スタイル */
     .modal-overlay {
@@ -136,15 +138,10 @@
     </button>
 
     <div class="part-list" id="part-list">
-      <!-- JavaScriptでボタンを自動生成 -->
+      <!-- JavaScriptでカテゴリーボタンと全範囲ボタンをスクロール内に生成 -->
     </div>
 
-    <!-- 全範囲ボタン -->
-    <button class="btn btn-part" id="all-range-btn" style="background-color: #4b5563; margin-top: 8px; text-align: center;" onclick="selectRange('all')">
-      全範囲
-    </button>
-
-    <!-- 学習記録クリアボタン -->
+    <!-- 学習記録クリアボタン（灰色） -->
     <button class="btn-clear-record" id="clear-record-btn">
       🗑️ 学習クリア
     </button>
