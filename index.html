@@ -37,8 +37,9 @@
       width: 100%; padding: 12px; border: none; border-radius: 8px;
       font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s;
     }
+    /* 級選択ボタンの背景色をカテゴリー選択と同じ青色(#3b82f6)に統一 */
     .btn-grade {
-      color: white; margin-bottom: 10px; font-size: 16px; padding: 14px; font-weight: bold;
+      background-color: #3b82f6; color: white; margin-bottom: 10px; font-size: 16px; padding: 14px; font-weight: bold;
     }
     .grade-list { max-height: 480px; overflow-y: auto; padding-right: 4px; }
     .btn-part-wrapper {
@@ -114,17 +115,17 @@
 <body>
 
 <div class="container">
-  <!-- 級選択画面 -->
+  <!-- 級選択画面（すべての級ボタンを統一した青色に設定） -->
   <div id="grade-screen" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
     <div class="title">英検単語マスター</div>
     <div class="grade-list">
-      <button class="btn btn-grade" style="background-color: #2563eb;" onclick="selectGrade('5')">英検 5級（初歩的なレベル）</button>
-      <button class="btn btn-grade" style="background-color: #0d9488;" onclick="selectGrade('4')">英検 4級</button>
-      <button class="btn btn-grade" style="background-color: #0284c7;" onclick="selectGrade('3')">英検 3級</button>
-      <button class="btn btn-grade" style="background-color: #7c3aed;" onclick="selectGrade('pre2')">英検 準2級</button>
-      <button class="btn btn-grade" style="background-color: #c026d3;" onclick="selectGrade('2')">英検 2級</button>
-      <button class="btn btn-grade" style="background-color: #ea580c;" onclick="selectGrade('pre1')">英検 準1級</button>
-      <button class="btn btn-grade" style="background-color: #dc2626;" onclick="selectGrade('1')">英検 1級（最上級）</button>
+      <button class="btn btn-grade" onclick="selectGrade('5')">英検 5級（初歩的なレベル）</button>
+      <button class="btn btn-grade" onclick="selectGrade('4')">英検 4級</button>
+      <button class="btn btn-grade" onclick="selectGrade('3')">英検 3級</button>
+      <button class="btn btn-grade" onclick="selectGrade('pre2')">英検 準2級</button>
+      <button class="btn btn-grade" onclick="selectGrade('2')">英検 2級</button>
+      <button class="btn btn-grade" onclick="selectGrade('pre1')">英検 準1級</button>
+      <button class="btn btn-grade" onclick="selectGrade('1')">英検 1級（最上級）</button>
     </div>
   </div>
 
