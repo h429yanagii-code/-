@@ -27,6 +27,7 @@ const resetBtn = document.getElementById('reset-btn');
 const toast = document.getElementById('toast');
 const partListContainer = document.getElementById('part-list');
 const speakerBtn = document.getElementById('speaker-btn');
+const weakModeBtn = document.getElementById('weak-mode-btn');
 
 // カテゴリーの表示名定義
 const categoryNames = {
@@ -89,12 +90,16 @@ function speakWithTTS(text) {
   }
 }
 
-// 級に応じたLocalStorageキー
+// LocalStorage キー取得
 function getStorageKey() {
   return `eiken${currentGrade}_mastered_ids`;
 }
 
-// LocalStorage 取得・保存
+function getWeakStorageKey() {
+  return `eiken${currentGrade}_weak_ids`;
+}
+
+// 習得済みID 取得・保存
 function getMasteredIds() {
   const saved = localStorage.getItem(getStorageKey());
   return saved ? JSON.parse(saved) : [];
@@ -102,6 +107,30 @@ function getMasteredIds() {
 
 function saveMasteredIds(ids) {
   localStorage.setItem(getStorageKey(), JSON.stringify(ids));
+}
+
+// 苦手ID 取得・保存
+function getWeakIds() {
+  const saved = localStorage.getItem(getWeakStorageKey());
+  return saved ? JSON.parse(saved) : [];
+}
+
+function saveWeakIds(ids) {
+  localStorage.setItem(getWeakStorageKey(), JSON.stringify(ids));
+}
+
+function addWeakId(id) {
+  const weakIds = getWeakIds();
+  if (!weakIds.includes(id)) {
+    weakIds.push(id);
+    saveWeakIds(weakIds);
+  }
+}
+
+function removeWeakId(id) {
+  const weakIds = getWeakIds();
+  const updated = weakIds.filter(wId => wId !== id);
+  saveWeakIds(updated);
 }
 
 function showToast(message) {
@@ -123,13 +152,24 @@ function selectGrade(grade) {
   renderPartButtons();
 }
 
-// 範囲選択画面のボタン描画（完了チェック）
+// 範囲選択画面のボタン描画（完了チェック＆苦手件数更新）
 function renderPartButtons() {
   partListContainer.innerHTML = '';
   const masteredIds = getMasteredIds();
+  const weakIds = getWeakIds();
   const allGradeWords = wordsData[currentGrade] || [];
   const categories = categoryNames[currentGrade] || [];
 
+  // 苦手単語集中暗記ボタンの状態更新
+  const currentWeakWords = allGradeWords.filter(w => weakIds.includes(w.id));
+  weakModeBtn.textContent = `🔥 苦手単語集中暗記 (${currentWeakWords.length}語)`;
+  if (currentWeakWords.length === 0) {
+    weakModeBtn.disabled = true;
+  } else {
+    weakModeBtn.disabled = false;
+  }
+
+  // カテゴリーボタン作成
   categories.forEach(cat => {
     const partWords = allGradeWords.filter(w => w.part === cat.key);
     const isCompleted = partWords.length > 0 && partWords.every(w => masteredIds.includes(w.id));
@@ -163,6 +203,9 @@ function selectRange(range) {
   let filtered = [];
   if (range === 'all') {
     filtered = allGradeWords;
+  } else if (range === 'weak') {
+    const weakIds = getWeakIds();
+    filtered = allGradeWords.filter(w => weakIds.includes(w.id));
   } else {
     filtered = allGradeWords.filter(w => w.part === range);
   }
@@ -171,7 +214,7 @@ function selectRange(range) {
 
   wordList = filtered.map(w => ({
     ...w,
-    isMastered: masteredIds.includes(w.id)
+    isMastered: (range === 'weak') ? false : masteredIds.includes(w.id)
   }));
   
   selectScreen.classList.add('hidden');
@@ -233,11 +276,20 @@ flipBtn.addEventListener('click', () => {
 });
 
 forgetBtn.addEventListener('click', () => {
+  // 「忘れた」を押したら苦手リストに追加
+  if (currentWord) {
+    addWeakId(currentWord.id);
+  }
   pickNextWord();
 });
 
 rememberBtn.addEventListener('click', () => {
   currentWord.isMastered = true;
+
+  // 「覚えた」を押したら苦手リストから削除＆習得リストに追加
+  if (currentWord) {
+    removeWeakId(currentWord.id);
+  }
 
   const masteredIds = getMasteredIds();
   if (!masteredIds.includes(currentWord.id)) {
