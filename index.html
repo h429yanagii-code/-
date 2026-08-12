@@ -13,7 +13,7 @@
     .container {
       background: #ffffff; padding: 24px; border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 380px;
-      text-align: center; margin: 16px;
+      text-align: center; margin: 16px; position: relative;
     }
     .header-nav {
       display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
@@ -47,10 +47,17 @@
       border-radius: 12px; margin-left: 8px; font-weight: bold; white-space: nowrap;
     }
     .btn-weak {
-      background-color: #dc2626; color: white; font-size: 16px; padding: 14px;
-      margin-bottom: 12px; border-radius: 8px; font-weight: bold; width: 100%; border: none; cursor: pointer;
+      background-color: #dc2626; color: white; font-size: 16px; padding: 12px;
+      margin-bottom: 8px; border-radius: 8px; font-weight: bold; width: 100%; border: none; cursor: pointer;
     }
     .btn-weak:disabled {
+      background-color: #cbd5e1; color: #94a3b8; cursor: not-allowed;
+    }
+    .btn-list {
+      background-color: #475569; color: white; font-size: 14px; padding: 10px;
+      margin-bottom: 12px; border-radius: 8px; font-weight: bold; width: 100%; border: none; cursor: pointer;
+    }
+    .btn-list:disabled {
       background-color: #cbd5e1; color: #94a3b8; cursor: not-allowed;
     }
     .btn-flip { background-color: #e2e8f0; color: #334155; }
@@ -71,7 +78,29 @@
       background: rgba(15, 23, 42, 0.85); color: white; padding: 8px 16px;
       border-radius: 20px; font-size: 14px; font-weight: bold; transition: opacity 0.3s;
     }
-    .part-list { max-height: 320px; overflow-y: auto; padding-right: 4px; }
+    .part-list { max-height: 280px; overflow-y: auto; padding-right: 4px; }
+
+    /* モーダル（苦手リスト画面）スタイル */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5); display: flex;
+      justify-content: center; align-items: center; z-index: 100;
+    }
+    .modal-content {
+      background: #ffffff; padding: 20px; border-radius: 16px;
+      width: 90%; max-width: 380px; max-height: 80vh;
+      display: flex; flex-direction: column; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 12px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;
+    }
+    .modal-title { font-size: 18px; font-weight: bold; color: #1e293b; }
+    .modal-body { overflow-y: auto; flex: 1; margin-bottom: 12px; }
+    .weak-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+    .weak-table th, .weak-table td { padding: 10px 6px; border-bottom: 1px solid #e2e8f0; }
+    .weak-table th { background-color: #f8fafc; color: #64748b; font-size: 12px; }
+    .audio-btn { background: none; border: none; font-size: 18px; cursor: pointer; padding: 2px 6px; }
   </style>
 </head>
 <body>
@@ -94,6 +123,10 @@
     <!-- 苦手集中暗記ボタン -->
     <button class="btn-weak" id="weak-mode-btn" onclick="selectRange('weak')">
       🔥 苦手単語集中暗記 (0語)
+    </button>
+    <!-- 苦手単語リストボタン -->
+    <button class="btn-list" id="weak-list-btn">
+      📋 苦手単語リスト
     </button>
 
     <div class="part-list" id="part-list">
@@ -138,6 +171,30 @@
     
     <button class="btn btn-keep" id="keep-btn">記録を残して範囲選択へ</button>
     <button class="btn btn-reset" id="reset-btn">この範囲を初期化して解き直す</button>
+  </div>
+</div>
+
+<!-- 苦手単語リスト モーダルポップアップ -->
+<div id="modal-overlay" class="modal-overlay hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">苦手単語リスト</div>
+      <button class="btn-sub" id="close-modal-btn">閉じる</button>
+    </div>
+    <div class="modal-body">
+      <table class="weak-table">
+        <thead>
+          <tr>
+            <th>英語</th>
+            <th>日本語訳</th>
+            <th style="text-align: center; width: 50px;">発音</th>
+          </tr>
+        </thead>
+        <tbody id="weak-table-body">
+          <!-- JSで動的生成 -->
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
