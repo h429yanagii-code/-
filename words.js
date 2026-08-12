@@ -925,17 +925,17 @@ const wordsData = {
     { id: 1197, part: "part3", word: "slowly", meaning: "ゆっくりと" },
     { id: 1198, part: "part3", word: "carefully", meaning: "注意深く" },
     { id: 1199, part: "part3", word: "clearly", meaning: "はっきりと" },
-    { id: 2000, part: "part3", word: "suddenly", meaning: "急に・突然" },
-    { id: 2001, part: "part3", word: "finally", meaning: "ついに・最後に" },
-    { id: 2002, part: "part3", word: "actually", meaning: "実際に・実は" },
-    { id: 2003, part: "part3", word: "especially", meaning: "特に" },
-    { id: 2004, part: "part3", word: "almost", meaning: "ほとんど" },
-    { id: 2005, part: "part3", word: "quite", meaning: "かなり" },
-    { id: 2006, part: "part3", word: "enough", meaning: "十分に" },
-    { id: 2007, part: "part3", word: "per", meaning: "〜につき" },
-    { id: 2008, part: "part3", word: "maybe", meaning: "たぶん" },
-    { id: 2009, part: "part3", word: "probably", meaning: "十中八九・きっと" },
-    { id: 2010, part: "part3", word: "perhaps", meaning: "もしかすると" },
+    { id: 1200, part: "part3", word: "suddenly", meaning: "急に・突然" },
+    { id: 1201, part: "part3", word: "finally", meaning: "ついに・最後に" },
+    { id: 1202, part: "part3", word: "actually", meaning: "実際に・実は" },
+    { id: 1203, part: "part3", word: "especially", meaning: "特に" },
+    { id: 1204, part: "part3", word: "almost", meaning: "ほとんど" },
+    { id: 1205, part: "part3", word: "quite", meaning: "かなり" },
+    { id: 1206, part: "part3", word: "enough", meaning: "十分に" },
+    { id: 1207, part: "part3", word: "per", meaning: "〜につき" },
+    { id: 1208, part: "part3", word: "maybe", meaning: "たぶん" },
+    { id: 1209, part: "part3", word: "probably", meaning: "十中八九・きっと" },
+    { id: 1210, part: "part3", word: "perhaps", meaning: "もしかすると" },
 
     // --- Part 4 (1211〜1280語: 4級 連語・熟語1) ---
     { id: 1211, part: "part4", word: "be good at", meaning: "〜が得意である" },
@@ -1153,7 +1153,7 @@ const wordsData = {
     { id: 1419, part: "part6", word: "To tell the truth...", meaning: "実を言うと…" },
     { id: 1420, part: "part6", word: "Believe it or not...", meaning: "信じられないかもしれないが…" },
 
-    // --- Part 7 〜 Part 10 (演習・復習用枠組み) ---
+    // --- Part 7 〜 Part 10 ---
     { id: 1421, part: "part7", word: "environment", meaning: "環境" },
     { id: 1422, part: "part7", word: "experience", meaning: "経験" },
     { id: 1423, part: "part7", word: "volunteer", meaning: "ボランティア" },
