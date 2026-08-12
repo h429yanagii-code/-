@@ -11,7 +11,6 @@
       min-height: 100vh; margin: 0; background-color: #f0f4f8;
       padding: 16px 0;
     }
-    /* 枠全体の縦の長さを拡張 (min-height 追加) */
     .container {
       background: #ffffff; padding: 24px; border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 420px;
@@ -39,8 +38,9 @@
       font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s;
     }
     .btn-grade {
-      background-color: #2563eb; color: white; margin-bottom: 12px; font-size: 18px; padding: 16px;
+      color: white; margin-bottom: 10px; font-size: 16px; padding: 14px; font-weight: bold;
     }
+    .grade-list { max-height: 480px; overflow-y: auto; padding-right: 4px; }
     .btn-part-wrapper {
       margin-bottom: 8px; width: 100%;
     }
@@ -86,7 +86,6 @@
       background: rgba(15, 23, 42, 0.85); color: white; padding: 8px 16px;
       border-radius: 20px; font-size: 14px; font-weight: bold; transition: opacity 0.3s;
     }
-    /* スクロールエリアの高さを500pxに拡張 */
     .part-list { max-height: 500px; overflow-y: auto; padding-right: 4px; }
 
     /* モーダル（苦手リスト画面）スタイル */
@@ -115,11 +114,18 @@
 <body>
 
 <div class="container">
-  <!-- 級選択画面（最初の画面） -->
+  <!-- 級選択画面（全7級のボタンを設置） -->
   <div id="grade-screen" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
     <div class="title">英検単語マスター</div>
-    <button class="btn btn-grade" onclick="selectGrade('5')">英検 5級</button>
-    <button class="btn btn-grade" style="background-color: #0d9488;" onclick="selectGrade('4')">英検 4級</button>
+    <div class="grade-list">
+      <button class="btn btn-grade" style="background-color: #2563eb;" onclick="selectGrade('5')">英検 5級（初歩的なレベル）</button>
+      <button class="btn btn-grade" style="background-color: #0d9488;" onclick="selectGrade('4')">英検 4級</button>
+      <button class="btn btn-grade" style="background-color: #0284c7;" onclick="selectGrade('3')">英検 3級</button>
+      <button class="btn btn-grade" style="background-color: #7c3aed;" onclick="selectGrade('pre2')">英検 準2級</button>
+      <button class="btn btn-grade" style="background-color: #c026d3;" onclick="selectGrade('2')">英検 2級</button>
+      <button class="btn btn-grade" style="background-color: #ea580c;" onclick="selectGrade('pre1')">英検 準1級</button>
+      <button class="btn btn-grade" style="background-color: #dc2626;" onclick="selectGrade('1')">英検 1級（最上級）</button>
+    </div>
   </div>
 
   <!-- 範囲選択画面 -->
@@ -129,20 +135,17 @@
     </div>
     <div class="title" id="select-title">英検5級単語帳</div>
 
-    <!-- 苦手集中暗記ボタン -->
     <button class="btn-weak" id="weak-mode-btn" onclick="selectRange('weak')">
       🔥 苦手単語集中暗記 (0語)
     </button>
-    <!-- 苦手単語リストボタン -->
     <button class="btn-list" id="weak-list-btn">
       📋 苦手単語リスト
     </button>
 
     <div class="part-list" id="part-list">
-      <!-- JavaScriptでカテゴリーボタンと全範囲ボタンを生成 -->
+      <!-- JavaScriptでカテゴリーボタンと全範囲ボタンを動的生成 -->
     </div>
 
-    <!-- 学習記録クリアボタン -->
     <button class="btn-clear-record" id="clear-record-btn">
       🗑️ 学習クリア
     </button>
@@ -164,7 +167,6 @@
       <div class="meaning invisible" id="meaning-text">---</div>
     </div>
 
-    <!-- ボタン表示切替エリア -->
     <div id="action-area">
       <button class="btn btn-flip" id="flip-btn">裏返す</button>
       
@@ -202,7 +204,6 @@
           </tr>
         </thead>
         <tbody id="weak-table-body">
-          <!-- JSで動的生成 -->
         </tbody>
       </table>
     </div>
