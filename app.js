@@ -1,7 +1,8 @@
-let currentGrade = '5'; // '5' または '4'
+let currentGrade = '5';
 let wordList = [];
 let currentWord = null;
 let currentRange = '';
+let currentAudio = null; // ローカル音声インスタンス
 
 // UI要素
 const gradeScreen = document.getElementById('grade-screen');
@@ -26,15 +27,20 @@ const resetBtn = document.getElementById('reset-btn');
 const toast = document.getElementById('toast');
 const partListContainer = document.getElementById('part-list');
 
-// 音声再生関数
-function speakWord(text) {
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US';
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
+// オフライン対応：ローカル音声ファイルの再生処理
+function playLocalAudio(word) {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
   }
+
+  // ファイル名用にスペースをアンダースコアに置換し小文字化 (例: "get up" -> "get_up.mp3")
+  const fileName = word.toLowerCase().replace(/\s+/g, '_');
+  currentAudio = new Audio(`audio/${fileName}.mp3`);
+  
+  currentAudio.play().catch(err => {
+    console.log(`音声再生をスキップ (audio/${fileName}.mp3 が存在しません)`):
+  });
 }
 
 // 級に応じたLocalStorageキー
@@ -81,7 +87,6 @@ function renderPartButtons() {
     const partKey = `part${i}`;
     const partWords = allGradeWords.filter(w => w.part === partKey);
     
-    // パート内の全単語がマスター済みかチェック
     const isCompleted = partWords.length > 0 && partWords.every(w => masteredIds.includes(w.id));
 
     const wrapper = document.createElement('div');
@@ -158,8 +163,8 @@ function pickNextWord() {
   flipBtn.classList.remove('hidden');
   judgeBtnGroup.classList.add('hidden');
 
-  // 単語が表示されたタイミングで音声を再生
-  speakWord(currentWord.word);
+  // ローカル音声再生
+  playLocalAudio(currentWord.word);
 }
 
 // --- イベント登録 ---
@@ -192,7 +197,7 @@ backToGradeBtn.addEventListener('click', () => {
 });
 
 changePartBtn.addEventListener('click', () => {
-  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  if (currentAudio) currentAudio.pause();
 
   studyScreen.classList.add('hidden');
   renderPartButtons();
