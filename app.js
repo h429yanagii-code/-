@@ -27,20 +27,36 @@ const resetBtn = document.getElementById('reset-btn');
 const toast = document.getElementById('toast');
 const partListContainer = document.getElementById('part-list');
 
-// オフライン対応：ローカル音声ファイルの再生処理
-function playLocalAudio(word) {
+// 音声再生処理（ローカルファイル ＋ ブラウザ合成音声のバックアップ）
+function playAudio(word) {
+  if (!word) return;
+
   if (currentAudio) {
     currentAudio.pause();
     currentAudio.currentTime = 0;
   }
 
-  // ファイル名用にスペースをアンダースコアに置換し小文字化 (例: "get up" -> "get_up.mp3")
   const fileName = word.toLowerCase().replace(/\s+/g, '_');
   currentAudio = new Audio(`audio/${fileName}.mp3`);
-  
-  currentAudio.play().catch(err => {
-    console.log(`音声再生をスキップ (audio/${fileName}.mp3 が存在しません)`);
-  });
+
+  const playPromise = currentAudio.play();
+  if (playPromise !== undefined) {
+    playPromise.catch(() => {
+      // ローカルファイルがない、またはブロックされた場合はブラウザの標準TTS（読み上げ）で代替
+      speakWithTTS(word);
+    });
+  }
+}
+
+// ブラウザ標準のテキスト読み上げ（Web Speech API）
+function speakWithTTS(text) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel(); // 前の音声をキャンセル
+    const uttr = new SpeechSynthesisUtterance(text);
+    uttr.lang = 'en-US';
+    uttr.rate = 0.9;
+    window.speechSynthesis.speak(uttr);
+  }
 }
 
 // 級に応じたLocalStorageキー
@@ -162,17 +178,25 @@ function pickNextWord() {
 
   flipBtn.classList.remove('hidden');
   judgeBtnGroup.classList.add('hidden');
-
-  // ローカル音声再生
-  playLocalAudio(currentWord.word);
 }
 
 // --- イベント登録 ---
+
+// 単語テキスト（または単語カード）タップでも音声再生可能に設定
+wordText.style.cursor = 'pointer';
+wordText.addEventListener('click', () => {
+  if (currentWord) playAudio(currentWord.word);
+});
 
 flipBtn.addEventListener('click', () => {
   meaningText.classList.remove('invisible');
   flipBtn.classList.add('hidden');
   judgeBtnGroup.classList.remove('hidden');
+
+  // タップ操作に連動して音声を再生（スマホのブロック対策）
+  if (currentWord) {
+    playAudio(currentWord.word);
+  }
 });
 
 forgetBtn.addEventListener('click', () => {
