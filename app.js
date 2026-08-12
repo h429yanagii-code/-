@@ -127,12 +127,6 @@ function addWeakId(id) {
   }
 }
 
-function removeWeakId(id) {
-  const weakIds = getWeakIds();
-  const updated = weakIds.filter(wId => wId !== id);
-  saveWeakIds(updated);
-}
-
 function showToast(message) {
   toast.textContent = message;
   toast.classList.remove('hidden');
@@ -286,15 +280,13 @@ forgetBtn.addEventListener('click', () => {
 rememberBtn.addEventListener('click', () => {
   currentWord.isMastered = true;
 
-  // 「覚えた」を押したら苦手リストから削除＆習得リストに追加
-  if (currentWord) {
-    removeWeakId(currentWord.id);
-  }
-
-  const masteredIds = getMasteredIds();
-  if (!masteredIds.includes(currentWord.id)) {
-    masteredIds.push(currentWord.id);
-    saveMasteredIds(masteredIds);
+  // 通常モード時のみ、習得リストに追加（苦手リストからは自動削除しない）
+  if (currentRange !== 'weak') {
+    const masteredIds = getMasteredIds();
+    if (!masteredIds.includes(currentWord.id)) {
+      masteredIds.push(currentWord.id);
+      saveMasteredIds(masteredIds);
+    }
   }
 
   pickNextWord();
@@ -314,13 +306,15 @@ changePartBtn.addEventListener('click', () => {
 });
 
 saveBtn.addEventListener('click', () => {
-  const masteredIds = getMasteredIds();
-  wordList.forEach(w => {
-    if (w.isMastered && !masteredIds.includes(w.id)) {
-      masteredIds.push(w.id);
-    }
-  });
-  saveMasteredIds(masteredIds);
+  if (currentRange !== 'weak') {
+    const masteredIds = getMasteredIds();
+    wordList.forEach(w => {
+      if (w.isMastered && !masteredIds.includes(w.id)) {
+        masteredIds.push(w.id);
+      }
+    });
+    saveMasteredIds(masteredIds);
+  }
   showToast("進捗を保存しました！");
 });
 
@@ -332,10 +326,15 @@ keepBtn.addEventListener('click', () => {
 
 resetBtn.addEventListener('click', () => {
   if (confirm("現在の範囲の進捗をリセットして最初からやり直しますか？")) {
-    const masteredIds = getMasteredIds();
-    const currentPartIds = wordList.map(w => w.id);
-    const updatedIds = masteredIds.filter(id => !currentPartIds.includes(id));
-    saveMasteredIds(updatedIds);
+    if (currentRange === 'weak') {
+      // 苦手モードでリセットボタンが押された場合のみ、苦手リストをクリア
+      saveWeakIds([]);
+    } else {
+      const masteredIds = getMasteredIds();
+      const currentPartIds = wordList.map(w => w.id);
+      const updatedIds = masteredIds.filter(id => !currentPartIds.includes(id));
+      saveMasteredIds(updatedIds);
+    }
 
     completeScreen.classList.add('hidden');
     renderPartButtons();
