@@ -28,6 +28,8 @@ const toast = document.getElementById('toast');
 const partListContainer = document.getElementById('part-list');
 const speakerBtn = document.getElementById('speaker-btn');
 const weakModeBtn = document.getElementById('weak-mode-btn');
+const allRangeBtn = document.getElementById('all-range-btn');
+const clearRecordBtn = document.getElementById('clear-record-btn');
 
 // モーダル用要素
 const weakListBtn = document.getElementById('weak-list-btn');
@@ -153,7 +155,7 @@ function selectGrade(grade) {
   renderPartButtons();
 }
 
-// 範囲選択画面のボタン描画（完了チェック＆苦手件数更新）
+// 範囲選択画面のボタン描画（完了判定でボタンの色を緑色へ変更）
 function renderPartButtons() {
   partListContainer.innerHTML = '';
   const masteredIds = getMasteredIds();
@@ -183,19 +185,24 @@ function renderPartButtons() {
     const btn = document.createElement('button');
     btn.className = 'btn btn-part';
     btn.textContent = `${cat.name} (${partWords.length}語)`;
-    btn.onclick = () => selectRange(cat.key);
-
-    wrapper.appendChild(btn);
-
+    
+    // 完了している場合は背景色を緑色(#10b981)に変更
     if (isCompleted) {
-      const badge = document.createElement('span');
-      badge.className = 'badge-done';
-      badge.textContent = '完了';
-      wrapper.appendChild(badge);
+      btn.classList.add('btn-completed');
     }
-
+    
+    btn.onclick = () => selectRange(cat.key);
+    wrapper.appendChild(btn);
     partListContainer.appendChild(wrapper);
   });
+
+  // 全範囲ボタンの完了判定＆色変更
+  const isAllCompleted = allGradeWords.length > 0 && allGradeWords.every(w => masteredIds.includes(w.id));
+  if (isAllCompleted) {
+    allRangeBtn.classList.add('btn-completed');
+  } else {
+    allRangeBtn.classList.remove('btn-completed');
+  }
 }
 
 // 範囲選択
@@ -396,5 +403,15 @@ resetBtn.addEventListener('click', () => {
     completeScreen.classList.add('hidden');
     renderPartButtons();
     selectScreen.classList.remove('hidden');
+  }
+});
+
+// 「学習クリア」ボタン処理（ダイアログ確認後に選択中の級の記録を全消去）
+clearRecordBtn.addEventListener('click', () => {
+  if (confirm(`今までの学習記録（英検${currentGrade}級）をクリアしますか？`)) {
+    saveMasteredIds([]);
+    saveWeakIds([]);
+    renderPartButtons();
+    showToast(`英検${currentGrade}級の記録を消去しました`);
   }
 });
