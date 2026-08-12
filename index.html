@@ -9,10 +9,13 @@
     body {
       display: flex; justify-content: center; align-items: center;
       min-height: 100vh; margin: 0; background-color: #f0f4f8;
+      padding: 16px 0;
     }
+    /* 枠全体の縦の長さを拡張 (min-height 追加) */
     .container {
       background: #ffffff; padding: 24px; border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 380px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 420px;
+      min-height: 80vh; display: flex; flex-direction: column; justify-content: space-between;
       text-align: center; margin: 16px; position: relative;
     }
     .header-nav {
@@ -25,7 +28,7 @@
     }
     .card {
       background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px;
-      height: 180px; display: flex; flex-direction: column;
+      height: 220px; display: flex; flex-direction: column;
       justify-content: center; align-items: center; margin-bottom: 20px; padding: 16px;
     }
     .word-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
@@ -44,7 +47,6 @@
     .btn-part {
       background-color: #3b82f6; color: white; text-align: left; padding: 12px 16px; width: 100%;
     }
-    /* 完了時の緑色スタイル */
     .btn-completed {
       background-color: #10b981 !important;
     }
@@ -62,7 +64,6 @@
     .btn-list:disabled {
       background-color: #cbd5e1; color: #94a3b8; cursor: not-allowed;
     }
-    /* 灰色へ変更した学習クリアボタン */
     .btn-clear-record {
       background-color: #64748b; color: white; font-size: 14px; padding: 10px;
       margin-top: 12px; border-radius: 8px; font-weight: bold; width: 100%; border: none; cursor: pointer;
@@ -85,8 +86,8 @@
       background: rgba(15, 23, 42, 0.85); color: white; padding: 8px 16px;
       border-radius: 20px; font-size: 14px; font-weight: bold; transition: opacity 0.3s;
     }
-    /* スクロールエリアの長さを1.3倍（約380px）に拡張 */
-    .part-list { max-height: 380px; overflow-y: auto; padding-right: 4px; }
+    /* スクロールエリアの高さを500pxに拡張 */
+    .part-list { max-height: 500px; overflow-y: auto; padding-right: 4px; }
 
     /* モーダル（苦手リスト画面）スタイル */
     .modal-overlay {
@@ -115,14 +116,14 @@
 
 <div class="container">
   <!-- 級選択画面（最初の画面） -->
-  <div id="grade-screen">
+  <div id="grade-screen" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
     <div class="title">英検単語マスター</div>
     <button class="btn btn-grade" onclick="selectGrade('5')">英検 5級</button>
     <button class="btn btn-grade" style="background-color: #0d9488;" onclick="selectGrade('4')">英検 4級</button>
   </div>
 
   <!-- 範囲選択画面 -->
-  <div id="select-screen" class="hidden">
+  <div id="select-screen" class="hidden" style="width: 100%;">
     <div class="header-nav">
       <button class="btn-sub" id="back-to-grade-btn">← 級選択</button>
     </div>
@@ -138,17 +139,17 @@
     </button>
 
     <div class="part-list" id="part-list">
-      <!-- JavaScriptでカテゴリーボタンと全範囲ボタンをスクロール内に生成 -->
+      <!-- JavaScriptでカテゴリーボタンと全範囲ボタンを生成 -->
     </div>
 
-    <!-- 学習記録クリアボタン（灰色） -->
+    <!-- 学習記録クリアボタン -->
     <button class="btn-clear-record" id="clear-record-btn">
       🗑️ 学習クリア
     </button>
   </div>
 
   <!-- 学習画面 -->
-  <div id="study-screen" class="hidden">
+  <div id="study-screen" class="hidden" style="width: 100%;">
     <div class="header-nav">
       <button class="btn-sub" id="change-part-btn">← 範囲変更</button>
       <div class="progress" id="progress-text">残り: 0 単語</div>
@@ -175,7 +176,7 @@
   </div>
 
   <!-- 完了画面 -->
-  <div id="complete-screen" class="hidden">
+  <div id="complete-screen" class="hidden" style="width: 100%;">
     <div style="font-size: 48px; margin-bottom: 12px;">🎉</div>
     <div class="complete-msg">この範囲をクリアしました！</div>
     
