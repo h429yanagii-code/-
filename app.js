@@ -30,14 +30,13 @@ const speakerBtn = document.getElementById('speaker-btn');
 const weakModeBtn = document.getElementById('weak-mode-btn');
 const clearRecordBtn = document.getElementById('clear-record-btn');
 
-// モーダル用要素
 const weakListBtn = document.getElementById('weak-list-btn');
 const modalOverlay = document.getElementById('modal-overlay');
 const closeModalBtn = document.getElementById('close-modal-btn');
 const weakTableBody = document.getElementById('weak-table-body');
 const modalTitle = document.getElementById('modal-title');
 
-// カテゴリーの表示名定義
+// 各級のカテゴリー表示名定義（全7級対応）
 const categoryNames = {
   "5": [
     { key: "1_date", name: "① 日時・カレンダー" },
@@ -62,10 +61,51 @@ const categoryNames = {
     { key: "8_adverbs", name: "⑧ 様子・度合いの副詞" },
     { key: "9_phrases", name: "⑨ 重要熟語・連語" },
     { key: "10_conversations", name: "⑩ 会話・日常フレーズ" }
+  ],
+  "3": [
+    { key: "1_daily", name: "① 日常生活・趣味" },
+    { key: "2_school_life", name: "② 学校・話題" },
+    { key: "3_travel", name: "③ 旅行・交通" },
+    { key: "4_verbs", name: "④ 3級重要動詞" },
+    { key: "5_adjectives", name: "⑤ 状態・評価の形容詞" },
+    { key: "6_phrases", name: "⑥ 熟語・慣用表現" }
+  ],
+  "pre2": [
+    { key: "1_society", name: "① 社会・メディア" },
+    { key: "2_science", name: "② 科学・自然環境" },
+    { key: "3_verbs", name: "③ 準2級重要動詞" },
+    { key: "4_adjectives", name: "④ 応用形容詞・副詞" },
+    { key: "5_phrases", name: "⑤ 重要熟語" }
+  ],
+  "2": [
+    { key: "1_business", name: "① ビジネス・経済" },
+    { key: "2_technology", name: "② 医療・テクノロジー" },
+    { key: "3_verbs", name: "③ 2級重要動詞" },
+    { key: "4_phrases", name: "④ 発展熟語" }
+  ],
+  "pre1": [
+    { key: "1_academic", name: "① 学術・環境問題" },
+    { key: "2_politics", name: "② 政治・国際関係" },
+    { key: "3_high_verbs", name: "③ 準1級難関動詞" },
+    { key: "4_phrases", name: "④ ハイレベル熟語" }
+  ],
+  "1": [
+    { key: "1_top_vocab", name: "① 1級超高難度語彙 A" },
+    { key: "2_top_vocab_b", name: "② 1級超高難度語彙 B" },
+    { key: "3_top_phrases", name: "③ 1級最難関熟語" }
   ]
 };
 
-// 音声再生処理
+const gradeDisplayNames = {
+  "5": "英検 5級",
+  "4": "英検 4級",
+  "3": "英検 3級",
+  "pre2": "英検 準2級",
+  "2": "英検 2級",
+  "pre1": "英検 準1級",
+  "1": "英検 1級"
+};
+
 function playAudio(word) {
   if (!word) return;
 
@@ -86,7 +126,6 @@ function playAudio(word) {
   }
 }
 
-// ブラウザ標準のテキスト読み上げ（Web Speech API）
 function speakWithTTS(text) {
   if ('speechSynthesis' in window) {
     window.speechSynthesis.cancel();
@@ -98,7 +137,6 @@ function speakWithTTS(text) {
   }
 }
 
-// LocalStorage キー取得
 function getStorageKey() {
   return `eiken${currentGrade}_mastered_ids`;
 }
@@ -107,7 +145,6 @@ function getWeakStorageKey() {
   return `eiken${currentGrade}_weak_ids`;
 }
 
-// 習得済みID 取得・保存
 function getMasteredIds() {
   const saved = localStorage.getItem(getStorageKey());
   return saved ? JSON.parse(saved) : [];
@@ -117,7 +154,6 @@ function saveMasteredIds(ids) {
   localStorage.setItem(getStorageKey(), JSON.stringify(ids));
 }
 
-// 苦手ID 取得・保存
 function getWeakIds() {
   const saved = localStorage.getItem(getWeakStorageKey());
   return saved ? JSON.parse(saved) : [];
@@ -143,10 +179,9 @@ function showToast(message) {
   }, 1500);
 }
 
-// 級の選択処理
 function selectGrade(grade) {
   currentGrade = grade;
-  selectTitle.textContent = `英検${currentGrade}級単語帳`;
+  selectTitle.textContent = `${gradeDisplayNames[currentGrade] || `英検${currentGrade}級`}単語帳`;
   
   gradeScreen.classList.add('hidden');
   selectScreen.classList.remove('hidden');
@@ -154,7 +189,6 @@ function selectGrade(grade) {
   renderPartButtons();
 }
 
-// 範囲選択画面のボタン描画（①〜⑩のあとに「全範囲」ボタンを確実に配置）
 function renderPartButtons() {
   partListContainer.innerHTML = '';
   const masteredIds = getMasteredIds();
@@ -162,7 +196,6 @@ function renderPartButtons() {
   const allGradeWords = (typeof wordsData !== 'undefined' && wordsData[currentGrade]) ? wordsData[currentGrade] : [];
   const categories = categoryNames[currentGrade] || [];
 
-  // 苦手単語ボタン・リストボタンの状態更新
   const currentWeakWords = allGradeWords.filter(w => weakIds.includes(w.id));
   weakModeBtn.textContent = `🔥 苦手単語集中暗記 (${currentWeakWords.length}語)`;
   if (currentWeakWords.length === 0) {
@@ -173,7 +206,6 @@ function renderPartButtons() {
     weakListBtn.disabled = false;
   }
 
-  // 1. カテゴリー①〜⑩のボタン作成
   categories.forEach(cat => {
     const partWords = allGradeWords.filter(w => w.part === cat.key);
     const isCompleted = partWords.length > 0 && partWords.every(w => masteredIds.includes(w.id));
@@ -194,7 +226,6 @@ function renderPartButtons() {
     partListContainer.appendChild(wrapper);
   });
 
-  // 2. ⑩の後ろに「全範囲」ボタンを追加
   const allWrapper = document.createElement('div');
   allWrapper.className = 'btn-part-wrapper';
 
@@ -212,7 +243,6 @@ function renderPartButtons() {
   partListContainer.appendChild(allWrapper);
 }
 
-// 範囲選択
 function selectRange(range) {
   currentRange = range;
   const allGradeWords = (typeof wordsData !== 'undefined' && wordsData[currentGrade]) ? wordsData[currentGrade] : [];
@@ -241,7 +271,6 @@ function selectRange(range) {
   pickNextWord();
 }
 
-// 次の単語を出題
 function pickNextWord() {
   const unmastered = wordList.filter(w => !w.isMastered);
 
@@ -269,13 +298,12 @@ function pickNextWord() {
   judgeBtnGroup.classList.add('hidden');
 }
 
-// --- 苦手単語リスト（モーダル）描画 ---
 function openWeakListModal() {
   const weakIds = getWeakIds();
   const allGradeWords = (typeof wordsData !== 'undefined' && wordsData[currentGrade]) ? wordsData[currentGrade] : [];
   const currentWeakWords = allGradeWords.filter(w => weakIds.includes(w.id));
 
-  modalTitle.textContent = `英検${currentGrade}級 苦手単語 (${currentWeakWords.length}語)`;
+  modalTitle.textContent = `${gradeDisplayNames[currentGrade] || `英検${currentGrade}級`} 苦手単語 (${currentWeakWords.length}語)`;
   weakTableBody.innerHTML = '';
 
   currentWeakWords.forEach(item => {
@@ -306,8 +334,7 @@ function openWeakListModal() {
   modalOverlay.classList.remove('hidden');
 }
 
-// --- イベント登録 ---
-
+// イベント登録
 weakListBtn.addEventListener('click', () => {
   openWeakListModal();
 });
@@ -413,12 +440,12 @@ resetBtn.addEventListener('click', () => {
   }
 });
 
-// 「学習クリア」ボタン処理
 clearRecordBtn.addEventListener('click', () => {
-  if (confirm(`今までの学習記録（英検${currentGrade}級）をクリアしますか？`)) {
+  const name = gradeDisplayNames[currentGrade] || `英検${currentGrade}級`;
+  if (confirm(`今までの学習記録（${name}）をクリアしますか？`)) {
     saveMasteredIds([]);
     saveWeakIds([]);
     renderPartButtons();
-    showToast(`英検${currentGrade}級の記録を消去しました`);
+    showToast(`${name}の記録を消去しました`);
   }
 });
