@@ -711,7 +711,7 @@ window.wordsData["pre2"] = [
   { id: 2799, part: "5_health_psy", word: "death", meaning: "死" },
   { id: 2800, part: "5_health_psy", word: "die", meaning: "死ぬ" },
 
-  // ⑥ 准2級重要動詞 A-M (2801〜2850)
+  // ⑥ 準2級重要動詞 A-M (2801〜2850)
   { id: 2801, part: "6_verbs_am", word: "abandon", meaning: "捨て去る・放棄する" },
   { id: 2802, part: "6_verbs_am", word: "absorb", meaning: "吸収する" },
   { id: 2803, part: "6_verbs_am", word: "accompany", meaning: "同行する" },
@@ -763,7 +763,7 @@ window.wordsData["pre2"] = [
   { id: 2849, part: "6_verbs_am", word: "confuse", meaning: "混乱させる" },
   { id: 2850, part: "6_verbs_am", word: "conquer", meaning: "征服する" },
 
-  // ⑦ 准2級重要動詞 N-Z (2851〜2950)
+  // ⑦ 準2級重要動詞 N-Z (2851〜2950)
   { id: 2851, part: "7_verbs_nz", word: "neglect", meaning: "怠る・放置する" },
   { id: 2852, part: "7_verbs_nz", word: "negotiate", meaning: "交渉する" },
   { id: 2853, part: "7_verbs_nz", word: "nominate", meaning: "指名する・推薦する" },
@@ -1169,7 +1169,7 @@ window.wordsData["pre2"] = [
   { id: 3249, part: "9_idioms", word: "think twice before", meaning: "〜する前によく考える" },
   { id: 3250, part: "9_idioms", word: "turn a blind eye to", meaning: "〜を見て見ぬふりをする" },
 
-  // ⑩ 准2級表現・対話フレーズ (3251〜3600)
+  // ⑩ 準2級表現・対話フレーズ (3251〜3600)
   { id: 3251, part: "10_phrases_dialog", word: "As far as I know", meaning: "私の知る限り" },
   { id: 3252, part: "10_phrases_dialog", word: "As long as", meaning: "〜する限りは" },
   { id: 3253, part: "10_phrases_dialog", word: "As soon as possible", meaning: "できるだけ早く" },
