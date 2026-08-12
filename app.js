@@ -2,7 +2,7 @@ let currentGrade = '5';
 let wordList = [];
 let currentWord = null;
 let currentRange = '';
-let currentAudio = null; // ローカル音声インスタンス
+let currentAudio = null;
 
 // UI要素
 const gradeScreen = document.getElementById('grade-screen');
@@ -26,8 +26,37 @@ const keepBtn = document.getElementById('keep-btn');
 const resetBtn = document.getElementById('reset-btn');
 const toast = document.getElementById('toast');
 const partListContainer = document.getElementById('part-list');
+const speakerBtn = document.getElementById('speaker-btn');
 
-// 音声再生処理（ローカルファイル ＋ ブラウザ合成音声のバックアップ）
+// カテゴリーの表示名定義
+const categoryNames = {
+  "5": [
+    { key: "1_date", name: "① 日時・カレンダー" },
+    { key: "2_num_color", name: "② 数・色・基本" },
+    { key: "3_school_sports", name: "③ 身の回り・学校" },
+    { key: "4_family_body", name: "④ 家族・人・体" },
+    { key: "5_food_nature", name: "⑤ 食べ物・生き物・自然" },
+    { key: "6_places_town", name: "⑥ 建物・場所・乗り物" },
+    { key: "7_verbs", name: "⑦ 基本の動作（動詞）" },
+    { key: "8_adjectives", name: "⑧ 気持ち・状態（形容詞・副詞）" },
+    { key: "9_pronouns", name: "⑨ 代名詞・疑問詞・つなぎ言葉" },
+    { key: "10_phrases", name: "⑩ あいさつ・基本熟語" }
+  ],
+  "4": [
+    { key: "1_study_info", name: "① 学校・学習・情報" },
+    { key: "2_town_places", name: "② 街・施設・交通" },
+    { key: "3_nature_env", name: "③ 自然・環境・地球" },
+    { key: "4_jobs_society", name: "④ 職業・人と社会" },
+    { key: "5_mind_verbs", name: "⑤ 気持ち・心の動詞" },
+    { key: "6_action_verbs", name: "⑥ 変化・移動の動詞" },
+    { key: "7_adjectives", name: "⑦ 状態・評価の形容詞" },
+    { key: "8_adverbs", name: "⑧ 様子・度合いの副詞" },
+    { key: "9_phrases", name: "⑨ 重要熟語・連語" },
+    { key: "10_conversations", name: "⑩ 会話・日常フレーズ" }
+  ]
+};
+
+// 音声再生処理
 function playAudio(word) {
   if (!word) return;
 
@@ -38,11 +67,11 @@ function playAudio(word) {
 
   const fileName = word.toLowerCase().replace(/\s+/g, '_');
   currentAudio = new Audio(`audio/${fileName}.mp3`);
+  currentAudio.volume = 1.0;
 
   const playPromise = currentAudio.play();
   if (playPromise !== undefined) {
     playPromise.catch(() => {
-      // ローカルファイルがない、またはブロックされた場合はブラウザの標準TTS（読み上げ）で代替
       speakWithTTS(word);
     });
   }
@@ -51,10 +80,11 @@ function playAudio(word) {
 // ブラウザ標準のテキスト読み上げ（Web Speech API）
 function speakWithTTS(text) {
   if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel(); // 前の音声をキャンセル
+    window.speechSynthesis.cancel();
     const uttr = new SpeechSynthesisUtterance(text);
     uttr.lang = 'en-US';
-    uttr.rate = 0.9;
+    uttr.rate = 0.85;
+    uttr.volume = 1.0;
     window.speechSynthesis.speak(uttr);
   }
 }
@@ -98,11 +128,10 @@ function renderPartButtons() {
   partListContainer.innerHTML = '';
   const masteredIds = getMasteredIds();
   const allGradeWords = wordsData[currentGrade] || [];
+  const categories = categoryNames[currentGrade] || [];
 
-  for (let i = 1; i <= 10; i++) {
-    const partKey = `part${i}`;
-    const partWords = allGradeWords.filter(w => w.part === partKey);
-    
+  categories.forEach(cat => {
+    const partWords = allGradeWords.filter(w => w.part === cat.key);
     const isCompleted = partWords.length > 0 && partWords.every(w => masteredIds.includes(w.id));
 
     const wrapper = document.createElement('div');
@@ -110,8 +139,8 @@ function renderPartButtons() {
 
     const btn = document.createElement('button');
     btn.className = 'btn btn-part';
-    btn.textContent = `Part ${i} (${(i-1)*70 + 1}〜${i*70}語)`;
-    btn.onclick = () => selectRange(partKey);
+    btn.textContent = `${cat.name} (${partWords.length}語)`;
+    btn.onclick = () => selectRange(cat.key);
 
     wrapper.appendChild(btn);
 
@@ -123,7 +152,7 @@ function renderPartButtons() {
     }
 
     partListContainer.appendChild(wrapper);
-  }
+  });
 }
 
 // 範囲選択
@@ -182,7 +211,12 @@ function pickNextWord() {
 
 // --- イベント登録 ---
 
-// 単語テキスト（または単語カード）タップでも音声再生可能に設定
+if (speakerBtn) {
+  speakerBtn.addEventListener('click', () => {
+    if (currentWord) playAudio(currentWord.word);
+  });
+}
+
 wordText.style.cursor = 'pointer';
 wordText.addEventListener('click', () => {
   if (currentWord) playAudio(currentWord.word);
@@ -193,7 +227,6 @@ flipBtn.addEventListener('click', () => {
   flipBtn.classList.add('hidden');
   judgeBtnGroup.classList.remove('hidden');
 
-  // タップ操作に連動して音声を再生（スマホのブロック対策）
   if (currentWord) {
     playAudio(currentWord.word);
   }
