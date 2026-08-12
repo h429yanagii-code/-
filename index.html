@@ -39,12 +39,14 @@
       background-color: #2563eb; color: white; margin-bottom: 12px; font-size: 18px; padding: 16px;
     }
     .btn-part-wrapper {
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;
+      margin-bottom: 8px; width: 100%;
     }
-    .btn-part { background-color: #3b82f6; color: white; text-align: left; padding: 12px 16px; }
-    .badge-done {
-      background-color: #10b981; color: white; font-size: 12px; padding: 4px 8px;
-      border-radius: 12px; margin-left: 8px; font-weight: bold; white-space: nowrap;
+    .btn-part {
+      background-color: #3b82f6; color: white; text-align: left; padding: 12px 16px; width: 100%;
+    }
+    /* 完了時の緑色スタイル */
+    .btn-completed {
+      background-color: #10b981 !important;
     }
     .btn-weak {
       background-color: #dc2626; color: white; font-size: 16px; padding: 12px;
@@ -59,6 +61,10 @@
     }
     .btn-list:disabled {
       background-color: #cbd5e1; color: #94a3b8; cursor: not-allowed;
+    }
+    .btn-clear-record {
+      background-color: #ef4444; color: white; font-size: 14px; padding: 10px;
+      margin-top: 8px; border-radius: 8px; font-weight: bold; width: 100%; border: none; cursor: pointer;
     }
     .btn-flip { background-color: #e2e8f0; color: #334155; }
     
@@ -78,7 +84,7 @@
       background: rgba(15, 23, 42, 0.85); color: white; padding: 8px 16px;
       border-radius: 20px; font-size: 14px; font-weight: bold; transition: opacity 0.3s;
     }
-    .part-list { max-height: 280px; overflow-y: auto; padding-right: 4px; }
+    .part-list { max-height: 250px; overflow-y: auto; padding-right: 4px; }
 
     /* モーダル（苦手リスト画面）スタイル */
     .modal-overlay {
@@ -130,10 +136,17 @@
     </button>
 
     <div class="part-list" id="part-list">
-      <!-- JavaScriptでボタンと完了バッジを自動生成 -->
+      <!-- JavaScriptでボタンを自動生成 -->
     </div>
-    <button class="btn btn-part" style="background-color: #4b5563; margin-top: 8px; text-align: center;" onclick="selectRange('all')">
+
+    <!-- 全範囲ボタン -->
+    <button class="btn btn-part" id="all-range-btn" style="background-color: #4b5563; margin-top: 8px; text-align: center;" onclick="selectRange('all')">
       全範囲
+    </button>
+
+    <!-- 学習記録クリアボタン -->
+    <button class="btn-clear-record" id="clear-record-btn">
+      🗑️ 学習クリア
     </button>
   </div>
 
