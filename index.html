@@ -114,7 +114,7 @@
 <body>
 
 <div class="container">
-  <!-- 級選択画面（全7級のボタンを設置） -->
+  <!-- 級選択画面 -->
   <div id="grade-screen" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
     <div class="title">英検単語マスター</div>
     <div class="grade-list">
@@ -212,7 +212,21 @@
 
 <div id="toast" class="toast hidden">保存しました</div>
 
-<script src="words.js"></script>
+<!-- 統合用単語オブジェクト定義 -->
+<script>
+  window.wordsData = {};
+</script>
+
+<!-- 分割された単語データファイル -->
+<script src="data/words_5.js"></script>
+<script src="data/words_4.js"></script>
+<script src="data/words_3.js"></script>
+<script src="data/words_pre2.js"></script>
+<script src="data/words_2.js"></script>
+<script src="data/words_pre1.js"></script>
+<script src="data/words_1.js"></script>
+
+<!-- メインプログラム -->
 <script src="app.js"></script>
 <script>
   if ('serviceWorker' in navigator) {
